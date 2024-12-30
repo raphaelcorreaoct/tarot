@@ -3,6 +3,7 @@ import Image from "next/image";
 import { SunMoon } from "lucide-react";
 import Button from "@/components/button";
 import { Inknut_Antiqua } from "next/font/google";
+import Link from "next/link";
 
 const InknutAntiqua = Inknut_Antiqua({
   variable: "--font-inknut-antiqua",
@@ -21,7 +22,9 @@ export default function Home() {
         </h1>
         <p className="mb-8">Descubra o que o universo quer te dizer</p>
 
-        <Button className="w-full max-w-[250px]">Começar agora!</Button>
+        <Link href="/start">
+          <Button className="w-full max-w-[250px]">Começar agora!</Button>
+        </Link>
       </main>
       <Image
         alt=""
