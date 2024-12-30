@@ -72,7 +72,7 @@ export default function Play() {
             return (
               <Card
                 key={i}
-                className={`absolute max-w-[75px]`}
+                className={`absolute max-w-[75px] hover:translate-y-[-75px]`}
                 onClick={handleSelect}
                 style={{
                   left: i * 8,

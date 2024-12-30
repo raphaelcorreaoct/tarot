@@ -20,7 +20,7 @@ export default function Card({
   return (
     <div
       onClick={onClick}
-      className={`aspect-[9/16] w-full container rounded-lg bg-main justify-center items-center flex border-4 ${className}`}
+      className={`aspect-[9/16] w-full container rounded-lg bg-main justify-center items-center flex border-4 cursor-pointer ${className}`}
       {...props}
     >
       {image ? (
