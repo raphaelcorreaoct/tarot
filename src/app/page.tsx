@@ -2,31 +2,36 @@ import Image from "next/image";
 
 import cards from "@/data";
 
+import { SunMoon } from "lucide-react";
+import Button from "@/components/button";
+import { Inknut_Antiqua } from "next/font/google";
+
+const InknutAntiqua = Inknut_Antiqua({
+  variable: "--font-inknut-antiqua",
+  subsets: ["latin"],
+  weight: "300",
+});
+
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <div className="grid grid-cols-6 gap-4">
+    <>
+      <main className="max-w-lg  w-full h-screen m-auto flex flex-col items-center p-5 text-center ">
+        <SunMoon size={150} className=" mb-8" />
 
-       
-        {cards.map((item, i) => {
-          return (
-            <div key={i}>
-              <Image
-                className="aspect-[9/16] w-full"
-                src={item.image}
-                alt="Next.js logo"
-                width={180}
-                height={38}
-                priority
-              />
-              <h3>{item.name}</h3>
-              <p>{item.description}</p>
-            </div>
-          );
-        })}
-         </div>
+        <h1 className={`text-4xl mb-8 ${InknutAntiqua.className}`}>
+          Tarot Online
+        </h1>
+        <p className="mb-8">Descubra o que o universo quer te dizer</p>
+
+        <Button className="w-full max-w-[250px]">Começar agora!</Button>
       </main>
-    </div>
+      <Image
+        alt=""
+        width={500}
+        height={500}
+        src="/cards-botton.png"
+        className="w-full max-h-[200px] fixed bottom-0 object-scale-down"
+      />
+    </>
   );
 }

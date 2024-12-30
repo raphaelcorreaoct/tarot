@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {  Inria_Sans, Inknut_Antiqua } from "next/font/google";
 import "./globals.css";
 
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
+const InknutAntiqua = Inknut_Antiqua({
+  variable: "--font-inknut-antiqua",
+  subsets: ["latin"],
+  weight: "300"
+});
 
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
+const InriaSans = Inria_Sans({
+  variable: "--font-inria-sans",
+  subsets: ["latin"],
+  weight: ["400", "700"]
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="pt_br">
       <body
-        className={` antialiased`}
+        className={`${InriaSans.className} antialiased bg-gradient-to-b from-suport to-main h-screen w-screen`}
       >
         {children}
       </body>

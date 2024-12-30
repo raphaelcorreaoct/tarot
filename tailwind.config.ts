@@ -8,9 +8,15 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'inria-sans': ['Inria Sans', 'sans-serif'],
+        'inknut-antiqua': ['var(--font-inknut-antiqua)', 'serif'],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        main: '#9A04DF',
+        suport: '#FF56DA'
       },
     },
   },
