@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
-import {  Inria_Sans, Inknut_Antiqua } from "next/font/google";
+import {  Inria_Sans } from "next/font/google";
 import "./globals.css";
 
-const InknutAntiqua = Inknut_Antiqua({
-  variable: "--font-inknut-antiqua",
-  subsets: ["latin"],
-  weight: "300"
-});
 
 const InriaSans = Inria_Sans({
   variable: "--font-inria-sans",

@@ -1,7 +1,5 @@
 import Image from "next/image";
 
-import cards from "@/data";
-
 import { SunMoon } from "lucide-react";
 import Button from "@/components/button";
 import { Inknut_Antiqua } from "next/font/google";
