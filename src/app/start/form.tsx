@@ -12,7 +12,7 @@ export function SingUpForm() {
   const router = useRouter()
 
 
-  const onSubmit = (e) => {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     router.push('/jogar')
   }
