@@ -23,9 +23,15 @@ export default function Play() {
 
   const handleSelect = () => {
     const randomIndex = getRandomIntInclusive(0, 78);
+    const card = cards[randomIndex];
+    const hasItem = selectedCards.findIndex((item) => item?.id === card?.id);
+
+    if (hasItem >= 0) {
+      handleSelect();
+      return;
+    }
 
     if (selectedCards.length <= 3) {
-      const card = cards[randomIndex];
       setSuport((prev) => prev.slice(0, -1));
       setSelectedCards((prev) => {
         return [...prev, card];
@@ -33,12 +39,11 @@ export default function Play() {
     }
   };
 
-  useEffect(()=> {
-    if(selectedCards.length === 4) {
-      setInterpretation('<p>Aqui uma interpretação</p>')
+  useEffect(() => {
+    if (selectedCards.length === 4) {
+      setInterpretation("<p>Aqui uma interpretação</p>");
     }
-
-  }, [selectedCards])
+  }, [selectedCards]);
 
   return (
     <main className="max-w-lg  w-full h-screen m-auto flex flex-col items-center p-5 text-center ">
