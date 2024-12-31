@@ -1,9 +1,11 @@
 "use client";
 import cards from "@/data";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { XCircle } from "lucide-react";
 import Card from "@/components/card";
 import { useParams } from "next/navigation";
+import getConsulta, { updateConsultaById } from "./action";
+import { useRouter } from "next/navigation";
 
 function getRandomIntInclusive(min: number, max: number) {
   min = Math.ceil(min);
@@ -22,9 +24,11 @@ export default function Play() {
 
   const [show, setShow] = useState<boolean>(false);
 
-  const params = useParams<{id:string}>();
-  const {id} = params;
+  const [loading, setLoading] = useState(true);
 
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
+  const { id } = params;
 
   const handleSelect = () => {
     const randomIndex = getRandomIntInclusive(0, 78);
@@ -47,8 +51,35 @@ export default function Play() {
   useEffect(() => {
     if (selectedCards.length === 4) {
       setInterpretation("<p>Aqui uma interpretação</p>");
+      updateConsultaById(id, {
+        data: {
+          cards: selectedCards,
+          description: iterpretation,
+        },
+      });
     }
   }, [selectedCards]);
+
+  useEffect(() => {
+    if (id) {
+      (async () => {
+        const consulta = await getConsulta(id);
+
+        if (!consulta?.paymentAccept || !consulta) {
+          router.replace("/");
+        }
+
+        if (consulta?.data) {
+          setSuport([]);
+          setSelectedCards(consulta?.data?.cards);
+        }
+
+        setLoading(false);
+      })();
+    }
+  }, [id]);
+
+  if (loading) return <h1>Carregando...</h1>;
 
   return (
     <main className="max-w-lg  w-full h-screen m-auto flex flex-col items-center p-5 text-center ">
