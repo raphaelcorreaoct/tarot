@@ -3,6 +3,7 @@ import cards from "@/data";
 import { useEffect, useState } from "react";
 import { XCircle } from "lucide-react";
 import Card from "@/components/card";
+import { useParams } from "next/navigation";
 
 function getRandomIntInclusive(min: number, max: number) {
   min = Math.ceil(min);
@@ -20,6 +21,10 @@ export default function Play() {
   const [iterpretation, setInterpretation] = useState<null | string>(null);
 
   const [show, setShow] = useState<boolean>(false);
+
+  const params = useParams<{id:string}>();
+  const {id} = params;
+
 
   const handleSelect = () => {
     const randomIndex = getRandomIntInclusive(0, 78);
