@@ -1,7 +1,8 @@
 
+import cards from "@/data";
 
-interface User {
-  id: String;
+export interface User {
+  id: string;
   email: string;
   name: string;
   lastConsultation: FirebaseFirestore.Timestamp;
@@ -9,12 +10,14 @@ interface User {
 }
 
 
-interface Consults {
-  id: string;
+export interface Consults {
+  id: User['id'];
   userId: string;
   date: FirebaseFirestore.Timestamp;
+  gameEnd?: boolean;
+  paymentAccept: boolean;
   data: {
-    cards: [],
+    cards: typeof cards,
     interpretation: string
   }
 }

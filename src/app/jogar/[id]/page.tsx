@@ -1,6 +1,6 @@
 "use client";
 import cards from "@/data";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { XCircle } from "lucide-react";
 import Card from "@/components/card";
 import { useParams } from "next/navigation";
@@ -17,7 +17,7 @@ const deck = Array.from({ length: 27 }, (_, i) => i + 1);
 
 export default function Play() {
   const [selectedCards, setSelectedCards] = useState<typeof cards>([]);
-  const [suport, setSuport] = useState<number[]>([0, 0, 0, 0]);
+  const [support, setSupport] = useState<number[]>([0, 0, 0, 0]);
   const [focusedCard, setFocusCard] = useState<(typeof cards)[0] | null>(null);
 
   const [iterpretation, setInterpretation] = useState<null | string>(null);
@@ -43,7 +43,7 @@ export default function Play() {
     }
 
     if (selectedCards.length <= 3) {
-      setSuport((prev) => prev.slice(0, -1));
+      setSupport((prev) => prev.slice(0, -1));
       setSelectedCards((prev) => {
         return [...prev, card];
       });
@@ -52,24 +52,24 @@ export default function Play() {
 
   useEffect(() => {
     (async () => {
-      if (selectedCards.length === 4  && !gameEnd) {
-        const interpretations = await getDescription([
+      if (selectedCards.length === 4 && !gameEnd) {
+        const IAInterpretation = await getDescription([
           selectedCards[0].name,
           selectedCards[1].name,
           selectedCards[2].name,
           selectedCards[3].name,
         ]);
-        setInterpretation(interpretations);
+        setInterpretation(IAInterpretation);
         updateConsultaById(id, {
           gameEnd: true,
           data: {
             cards: selectedCards,
-            description: interpretations,
+            interpretation: IAInterpretation,
           },
         });
       }
     })();
-  }, [selectedCards]);
+  }, [selectedCards, gameEnd, id]);
 
   useEffect(() => {
     if (id) {
@@ -81,10 +81,10 @@ export default function Play() {
         }
 
         if (consulta?.data) {
-          setSuport([]);
+          setSupport([]);
           setSelectedCards(consulta?.data?.cards);
-          setInterpretation(consulta?.data?.description)
-          setGameEnd(consulta?.gameEnd);
+          setInterpretation(consulta?.data?.interpretation);
+          setGameEnd(consulta?.gameEnd || false);
         }
 
         setLoading(false);
@@ -108,7 +108,7 @@ export default function Play() {
             }}
           />
         ))}
-        {suport.map((_, i) => (
+        {support.map((_, i) => (
           <Card key={`suport_${i}`} />
         ))}
       </div>
@@ -140,7 +140,10 @@ export default function Play() {
       {iterpretation && (
         <div className="w-full flex flex-1 flex-col justify-start items-start">
           <h2 className="text-4xl font-bold my-4">Interpretação</h2>
-          <div className="w-full text-left gap-4 grid flex-1 overflow-y-auto max-h-96" dangerouslySetInnerHTML={{ __html: iterpretation }} />
+          <div
+            className="w-full text-left gap-4 grid flex-1 overflow-y-auto max-h-96"
+            dangerouslySetInnerHTML={{ __html: iterpretation }}
+          />
         </div>
       )}
 

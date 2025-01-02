@@ -1,7 +1,6 @@
 'use client'
 import {useState} from 'react'
 import Button from "@/components/button";
-import { useRouter } from 'next/navigation';
 import { createCheckoutSession } from '@/services/payment.service';
 
 export function SingUpForm() {
@@ -10,12 +9,11 @@ export function SingUpForm() {
   const [email, setEmail] = useState('');
   const [newsletter, setNewsletter] = useState(false);
 
-  const router = useRouter()
 
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    //router.push('/jogar')
+  
     await createCheckoutSession({
       name,
       email,

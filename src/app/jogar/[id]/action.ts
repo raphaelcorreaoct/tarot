@@ -1,40 +1,45 @@
-'use server';
+"use server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-const genAI = new GoogleGenerativeAI(process.env.NEXT_GEMINI_API_KEY || '');
+const genAI = new GoogleGenerativeAI(process.env.NEXT_GEMINI_API_KEY || "");
 import { firestore } from "@/services/firebaseAdmin";
-import { remark } from 'remark';
-import html from 'remark-html';
+import { remark } from "remark";
+import html from "remark-html";
+import { Consults } from "@/types/interfaces";
 
-export default async function getConsulta (docId:string){
+export default async function getConsulta(
+  docId: string
+): Promise<Consults | null> {
   try {
-    const docRef = firestore.collection('consulta').doc(docId);
+    const docRef = firestore.collection("consulta").doc(docId);
     const docSnapshot = await docRef.get();
 
     if (docSnapshot.exists) {
-      return { id: docSnapshot.id, ...docSnapshot.data() };
+      return { id: docSnapshot.id, ...docSnapshot.data() } as Consults;
     } else {
       console.log(`Documento com ID ${docId} não encontrado.`);
       return null;
     }
   } catch (error) {
-    console.error('Erro ao buscar documento:', error);
-    throw new Error('Erro ao buscar documento');
+    console.error("Erro ao buscar documento:", error);
+    throw new Error("Erro ao buscar documento");
   }
 }
 
-export const updateConsultaById = async (docId: string, data: Record<string, {}>) => {
+export const updateConsultaById = async (
+  docId: string,
+  data: Partial<Consults>
+) => {
   try {
-    const docRef = firestore.collection('consulta').doc(docId);
+    const docRef = firestore.collection("consulta").doc(docId);
     await docRef.update(data);
-    return { message: 'Documento atualizado com sucesso' };
+    return { message: "Documento atualizado com sucesso" };
   } catch (error) {
-    console.error('Erro ao atualizar documento:', error);
-    throw new Error('Erro ao atualizar documento');
+    console.error("Erro ao atualizar documento:", error);
+    throw new Error("Erro ao atualizar documento");
   }
 };
 
-
-export const getDescription = async (cards: string[]) => {
+export const getDescription = async (cards: string[]): Promise<string> => {
   const prompt = `
     Você vai atuar como backend de uma aplicação node. Então responda apenas o necessário e sigas as regras que vou dizer 
     
@@ -45,11 +50,8 @@ export const getDescription = async (cards: string[]) => {
 
     Aqui estão as cartas 
 
-    ${cards.join(',')}
+    ${cards.join(",")}
   `;
-
-  console.log('-----PROMPT-----');
-  console.log(prompt);
 
   const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
@@ -57,14 +59,8 @@ export const getDescription = async (cards: string[]) => {
   const response = await result.response;
   const text = response.text();
 
-  const processedContent = await remark()
-    .use(html)
-    .process(text);
+  const processedContent = await remark().use(html).process(text);
   const contentHtml = processedContent.toString();
 
-  console.log('-----RESULT-----');
-  console.log(contentHtml);
-  
   return contentHtml;
-
-}
+};

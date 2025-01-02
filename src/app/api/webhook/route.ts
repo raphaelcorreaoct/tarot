@@ -1,5 +1,5 @@
-
-import {firestore} from '@/services/firebaseAdmin';
+import { firestore } from "@/services/firebaseAdmin";
+import { Consults } from "@/types/interfaces";
 
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
@@ -8,10 +8,9 @@ import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const secret = process.env.STRIPE_SECRET_KEY_WEBHOOK;
 
-
-export const getConsultaById = async ( docId: string) => {
+const getConsultaById = async (docId: string) => {
   try {
-    const docRef = firestore.collection('consulta').doc(docId);
+    const docRef = firestore.collection("consulta").doc(docId);
     const docSnapshot = await docRef.get();
 
     if (docSnapshot.exists) {
@@ -21,19 +20,22 @@ export const getConsultaById = async ( docId: string) => {
       return null;
     }
   } catch (error) {
-    console.error('Erro ao buscar documento:', error);
-    throw new Error('Erro ao buscar documento');
+    console.error("Erro ao buscar documento:", error);
+    throw new Error("Erro ao buscar documento");
   }
 };
 
-export const updateConsultaById = async (docId: string, data: Record<string, {}>) => {
+const updateConsultaById = async (
+  docId: string,
+  data: Partial<Consults>
+) => {
   try {
-    const docRef = firestore.collection('consulta').doc(docId);
+    const docRef = firestore.collection("consulta").doc(docId);
     await docRef.update(data);
-    return { message: 'Documento atualizado com sucesso' };
+    return { message: "Documento atualizado com sucesso" };
   } catch (error) {
-    console.error('Erro ao atualizar documento:', error);
-    throw new Error('Erro ao atualizar documento');
+    console.error("Erro ao atualizar documento:", error);
+    throw new Error("Erro ao atualizar documento");
   }
 };
 
@@ -51,15 +53,14 @@ export async function POST(request: Request) {
       case "checkout.session.completed":
         if (event.data.object.payment_status === "paid") {
           const consultaId = event.data.object.metadata?.consultaId;
-          if(!consultaId) throw new Error("Missing secret or signature");
+          if (!consultaId) throw new Error("Missing secret or signature");
 
           const userEmail = event.data.object.customer_details?.email;
           const document = await getConsultaById(consultaId);
-          
-          if(!document) throw new Error("Missing secret or signature");;
+
+          if (!document) throw new Error("Missing secret or signature");
 
           updateConsultaById(consultaId, {
-            ...document,
             paymentAccept: true,
           });
 
