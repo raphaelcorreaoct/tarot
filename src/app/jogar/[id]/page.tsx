@@ -69,14 +69,14 @@ export default function Play() {
         });
       }
     })();
-  }, [selectedCards, gameEnd, id]);
+  }, [selectedCards]);
 
   useEffect(() => {
     if (id) {
       (async () => {
         const consulta = await getConsulta(id);
 
-        if (!consulta?.paymentAccept || !consulta) {
+        if (!consulta?.paymentAccept) {
           router.replace("/");
         }
 

@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     ],
     mode: "payment",
     success_url: `${request.headers.get("origin")}/jogar/${consulta.id}`,
-    cancel_url: `${request.headers.get("origin")}`,
+    cancel_url: `${request.headers.get("origin")}/error`,
     metadata: {
       userId: user.id,
       consultaId: consulta.id,
