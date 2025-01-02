@@ -4,7 +4,7 @@ import { use, useEffect, useState } from "react";
 import { XCircle } from "lucide-react";
 import Card from "@/components/card";
 import { useParams } from "next/navigation";
-import getConsulta, { updateConsultaById } from "./action";
+import getConsulta, { getDescription, updateConsultaById } from "./action";
 import { useRouter } from "next/navigation";
 
 function getRandomIntInclusive(min: number, max: number) {
@@ -23,6 +23,8 @@ export default function Play() {
   const [iterpretation, setInterpretation] = useState<null | string>(null);
 
   const [show, setShow] = useState<boolean>(false);
+
+  const [gameEnd, setGameEnd] = useState<boolean>(false);
 
   const [loading, setLoading] = useState(true);
 
@@ -49,15 +51,24 @@ export default function Play() {
   };
 
   useEffect(() => {
-    if (selectedCards.length === 4) {
-      setInterpretation("<p>Aqui uma interpretação</p>");
-      updateConsultaById(id, {
-        data: {
-          cards: selectedCards,
-          description: iterpretation,
-        },
-      });
-    }
+    (async () => {
+      if (selectedCards.length === 4  && !gameEnd) {
+        const interpretations = await getDescription([
+          selectedCards[0].name,
+          selectedCards[1].name,
+          selectedCards[2].name,
+          selectedCards[3].name,
+        ]);
+        setInterpretation(interpretations);
+        updateConsultaById(id, {
+          gameEnd: true,
+          data: {
+            cards: selectedCards,
+            description: interpretations,
+          },
+        });
+      }
+    })();
   }, [selectedCards]);
 
   useEffect(() => {
@@ -72,6 +83,8 @@ export default function Play() {
         if (consulta?.data) {
           setSuport([]);
           setSelectedCards(consulta?.data?.cards);
+          setInterpretation(consulta?.data?.description)
+          setGameEnd(consulta?.gameEnd);
         }
 
         setLoading(false);
@@ -127,7 +140,7 @@ export default function Play() {
       {iterpretation && (
         <div className="w-full flex flex-1 flex-col justify-start items-start">
           <h2 className="text-4xl font-bold my-4">Interpretação</h2>
-          <div dangerouslySetInnerHTML={{ __html: iterpretation }} />
+          <div className="w-full text-left gap-4 grid flex-1 overflow-y-auto max-h-96" dangerouslySetInnerHTML={{ __html: iterpretation }} />
         </div>
       )}
 
