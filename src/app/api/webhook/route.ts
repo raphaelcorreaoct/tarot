@@ -42,7 +42,10 @@ const updateConsultaById = async (
 export async function POST(request: Request) {
   try {
     const body = await request.text();
-    const signature = (await headers()).get("stripe-signature");
+    const header = await headers();
+    
+    const signature = header.get("stripe-signature");
+
     if (!secret || !signature) {
       throw new Error("Missing secret or signature");
     }
