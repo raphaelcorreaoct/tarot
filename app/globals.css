@@ -1,26 +1,184 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0f0a1a;
+  --foreground: #f5f0ff;
+  --mystic-purple: #7c3aed;
+  --mystic-lilac: #a78bfa;
+  --mystic-rose: #ec4899;
+  --mystic-violet: #5b21b6;
+  --mystic-fuchsia: #d946ef;
+  --surface: #1a1425;
+  --surface-light: #2d2438;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-mystic-purple: var(--mystic-purple);
+  --color-mystic-lilac: var(--mystic-lilac);
+  --color-mystic-rose: var(--mystic-rose);
+  --color-mystic-violet: var(--mystic-violet);
+  --color-mystic-fuchsia: var(--mystic-fuchsia);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-display: var(--font-cormorant);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Decorative gradient background */
+.bg-mystic-gradient {
+  background: radial-gradient(
+      ellipse 80% 50% at 50% -20%,
+      rgba(124, 58, 237, 0.3) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 60% 40% at 80% 50%,
+      rgba(236, 72, 153, 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 60% 40% at 20% 80%,
+      rgba(167, 139, 250, 0.15) 0%,
+      transparent 50%
+    ),
+    var(--background);
+}
+
+/* Star twinkle animation */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+/* Moon glow */
+@keyframes moon-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 20px rgba(167, 139, 250, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 30px rgba(236, 72, 153, 0.4));
+  }
+}
+
+.animate-moon-glow {
+  animation: moon-glow 4s ease-in-out infinite;
+}
+
+/* Shuffle deck animation */
+@keyframes shuffle-card {
+  0% {
+    transform: translateY(0) rotate(-3deg) scale(1);
+  }
+  25% {
+    transform: translateY(-8px) rotate(2deg) scale(1.02);
+  }
+  50% {
+    transform: translateY(2px) rotate(-2deg) scale(0.98);
+  }
+  75% {
+    transform: translateY(-4px) rotate(1deg) scale(1.01);
+  }
+  100% {
+    transform: translateY(0) rotate(-3deg) scale(1);
+  }
+}
+
+@keyframes card-reveal {
+  0% {
+    transform: rotateY(-90deg) scale(0.8);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-shuffle {
+  animation: shuffle-card 0.4s ease-in-out infinite;
+}
+
+.animate-reveal {
+  animation: card-reveal 0.6s ease-out forwards;
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Popover entrance */
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+.animate-popover-in {
+  animation: popover-in 0.2s ease-out forwards;
+}
+
+/* Modal entrance */
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.animate-modal-in {
+  animation: modal-in 0.2s ease-out forwards;
+}
+
+/* Scrollbar estilizado para o card de leitura e modal */
+.reading-card-scroll::-webkit-scrollbar,
+.card-modal-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.reading-card-scroll::-webkit-scrollbar-track,
+.card-modal-scroll::-webkit-scrollbar-track {
+  background: rgba(167, 139, 250, 0.1);
+  border-radius: 3px;
+}
+.reading-card-scroll::-webkit-scrollbar-thumb,
+.card-modal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(167, 139, 250, 0.4);
+  border-radius: 3px;
+}
+.reading-card-scroll::-webkit-scrollbar-thumb:hover,
+.card-modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(167, 139, 250, 0.6);
 }
