@@ -7,12 +7,14 @@ export interface ISendReadingEmailParams {
   to: string;
   cards: ITarotCard[];
   reading: string;
+  intention?: string;
 }
 
 export async function sendReadingEmail({
   to,
   cards,
   reading,
+  intention,
 }: ISendReadingEmailParams): Promise<boolean> {
   const apiKey = process.env.MAILERSEND_API_KEY;
   const fromEmail = process.env.MAILERSEND_FROM_EMAIL;
@@ -30,9 +32,11 @@ export async function sendReadingEmail({
     )
     .join("\n");
 
-  const text = `Sua leitura de tarot — 3 cartas (Passado, Presente, Futuro)
+  const intentionBlock =
+    intention?.trim() ? `Sua intenção: ${intention.trim()}\n\n` : "";
 
-Suas cartas:
+  const text = `Sua leitura de tarot — 3 cartas (Passado, Presente, Futuro)
+${intentionBlock}Suas cartas:
 ${cardsList}
 
 Interpretação por IA:
@@ -59,6 +63,11 @@ Esta é sua leitura personalizada, gerada por inteligência artificial. Guarde-a
     )
     .join("");
 
+  const intentionHtml =
+    intention?.trim()
+      ? `<p style="margin-bottom: 16px; font-size: 0.9rem; color: #555;"><strong>Sua intenção:</strong> ${intention.trim().replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>`
+      : "";
+
   const html = `
 <!DOCTYPE html>
 <html>
@@ -69,7 +78,7 @@ Esta é sua leitura personalizada, gerada por inteligência artificial. Guarde-a
 <body style="font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; color: #333; max-width: 560px; margin: 0 auto; padding: 24px;">
   <h1 style="color: #7c3aed; font-size: 1.5rem;">Sua leitura de tarot</h1>
   <p style="color: #666; font-size: 0.9rem;">3 cartas — Passado, Presente, Futuro</p>
-  
+  ${intentionHtml}
   <h2 style="font-size: 1.1rem; margin-top: 24px;">Suas cartas</h2>
   <table style="width: 100%; border-collapse: collapse; margin-top: 16px;">
     <tr>${cardImagesHtml}</tr>

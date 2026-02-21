@@ -24,12 +24,13 @@ function pickRandomCards(count: number): ITarotCard[] {
 }
 
 async function fetchTarotReading(
-  cards: ITarotCard[]
+  cards: ITarotCard[],
+  intention?: string
 ): Promise<{ reading: string; emailSent: boolean }> {
   const res = await fetch("/api/tarot-reading", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ cards }),
+    body: JSON.stringify({ cards, intention: intention?.trim() || undefined }),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error ?? "Erro ao gerar leitura");
@@ -57,6 +58,7 @@ function TiragemContent() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
+  const [intention, setIntention] = useState("");
 
   const revealedCards = useMemo(
     () =>
@@ -109,6 +111,7 @@ function TiragemContent() {
 
   const handleNovaTiragem = useCallback(async () => {
     setEmailSent(false);
+    setIntention("");
     const res = await fetch("/api/tiragem-status");
     const data = (await res.json()) as { tiragens: number };
     setTiragensRestantes(data.tiragens ?? 0);
@@ -128,14 +131,14 @@ function TiragemContent() {
     setAiLoading(true);
     setAiError(null);
     setEmailSent(false);
-    fetchTarotReading(drawnCards)
+    fetchTarotReading(drawnCards, intention)
       .then(({ reading, emailSent: sent }) => {
         setAiReading(reading);
         setEmailSent(sent);
       })
       .catch((err) => setAiError(err instanceof Error ? err.message : "Erro ao gerar leitura"))
       .finally(() => setAiLoading(false));
-  }, [state, drawnCards]);
+  }, [state, drawnCards, intention]);
 
 
   const displayedReading = useTypingEffect(
@@ -196,10 +199,21 @@ function TiragemContent() {
             <h1 className="mb-6 text-center font-[family-name:var(--font-cormorant)] text-3xl font-bold text-white sm:text-4xl">
               Concentre sua energia
             </h1>
-            <p className="mb-10 max-w-sm text-center text-[var(--mystic-lilac)]/90">
-              Pense na sua pergunta ou no que deseja saber. A IA interpretará
-              suas cartas quando você revelar. Toque no baralho quando estiver pronto.
+            <p className="mb-6 max-w-sm text-center text-[var(--mystic-lilac)]/90">
+              Manifeste sua intenção ou pergunta. A IA interpretará as cartas com base no que você deseja saber.
             </p>
+            <label htmlFor="intention" className="sr-only">
+              Sua intenção ou pergunta para esta leitura
+            </label>
+            <textarea
+              id="intention"
+              value={intention}
+              onChange={(e) => setIntention(e.target.value)}
+              placeholder="Ex: Quero saber sobre meu relacionamento... ou sobre uma decisão profissional..."
+              maxLength={500}
+              rows={3}
+              className="mb-8 w-full max-w-md resize-none rounded-xl border border-[var(--mystic-lilac)]/30 bg-[var(--surface)]/50 px-4 py-3 text-[var(--mystic-lilac)]/95 placeholder:text-[var(--mystic-lilac)]/50 focus:border-[var(--mystic-lilac)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--mystic-lilac)]/30"
+            />
             <ShuffleDeck className="mb-12" />
             <button
               type="button"

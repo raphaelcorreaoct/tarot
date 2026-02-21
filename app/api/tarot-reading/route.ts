@@ -21,7 +21,10 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { cards } = body as { cards: ITarotCard[] };
+    const { cards, intention } = body as {
+      cards: ITarotCard[];
+      intention?: string;
+    };
 
     if (!cards || !Array.isArray(cards) || cards.length !== 3) {
       return NextResponse.json(
@@ -37,20 +40,24 @@ export async function POST(request: Request) {
       )
       .join("\n\n");
 
+    const intentionBlock = intention?.trim()
+      ? `\n\nINTENÇÃO ou PERGUNTA da pessoa para esta leitura:\n"${intention.trim()}"\n\nUse essa intenção como guia central. A leitura DEVE responder ou refletir sobre o que a pessoa manifestou.`
+      : "";
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: `Você é um tarólogo experiente. Sua missão é dar leituras curtas e objetivas. Seja místico mas conciso. Use português brasileiro. IMPORTANTE: Responda em no máximo 3 ou 4 frases — nada mais.`,
+          content: `Você é um tarólogo experiente. Sua missão é dar leituras curtas e objetivas. Seja místico mas conciso. Use português brasileiro. IMPORTANTE: Responda em no máximo 3 ou 4 frases — nada mais. Quando a pessoa informar uma intenção ou pergunta, a leitura deve focar nela e responder com base nas cartas.`,
         },
         {
           role: "user",
           content: `Leitura de tarot com 3 cartas (Passado, Presente, Futuro):
 
-${cardsContext}
+${cardsContext}${intentionBlock}
 
-Gere uma leitura MUITO resumida: 3 ou 4 frases no total. Conecte as cartas em uma mensagem direta — passado, presente e o que o futuro indica. Sem enrolação.`,
+Gere uma leitura MUITO resumida: 3 ou 4 frases no total. Conecte as cartas em uma mensagem direta — passado, presente e o que o futuro indica.${intention?.trim() ? " A resposta deve estar centrada na intenção manifestada." : ""} Sem enrolação.`,
         },
       ],
       max_tokens: 200,
@@ -72,7 +79,12 @@ Gere uma leitura MUITO resumida: 3 ou 4 frases no total. Conecte as cartas em um
     const userEmail = ironSession.email;
     if (userEmail) {
       try {
-        emailSent = await sendReadingEmail({ to: userEmail, cards, reading });
+        emailSent = await sendReadingEmail({
+          to: userEmail,
+          cards,
+          reading,
+          intention: intention?.trim() || undefined,
+        });
       } catch (err) {
         console.error("Erro ao enviar e-mail da leitura:", err);
       }
