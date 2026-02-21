@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { Moon } from "@/app/components/Moon";
 import { Star } from "@/app/components/Star";
 import { StarsDecoration } from "@/app/components/StarsDecoration";
@@ -22,7 +23,9 @@ function pickRandomCards(count: number): ITarotCard[] {
   return shuffled.slice(0, count);
 }
 
-async function fetchTarotReading(cards: ITarotCard[]): Promise<string> {
+async function fetchTarotReading(
+  cards: ITarotCard[]
+): Promise<{ reading: string; emailSent: boolean }> {
   const res = await fetch("/api/tarot-reading", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -30,10 +33,19 @@ async function fetchTarotReading(cards: ITarotCard[]): Promise<string> {
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error ?? "Erro ao gerar leitura");
-  return data.reading;
+  return { reading: data.reading, emailSent: data.emailSent ?? false };
 }
 
-export default function TiragemPage() {
+function TiragemContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tiragensFromPurchase = parseInt(searchParams.get("tiragens") ?? "0", 10);
+
+  const [statusLoading, setStatusLoading] = useState(true);
+  const [tiragensRestantes, setTiragensRestantes] = useState(
+    tiragensFromPurchase > 0 ? tiragensFromPurchase : 0
+  );
+
   const [state, setState] = useState<TTiragemState>("shuffling");
   const [drawnCards, setDrawnCards] = useState<ITarotCard[]>([]);
   const [carouselActiveIndex, setCarouselActiveIndex] = useState(0);
@@ -44,6 +56,7 @@ export default function TiragemPage() {
   const [aiReading, setAiReading] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
 
   const revealedCards = useMemo(
     () =>
@@ -51,16 +64,55 @@ export default function TiragemPage() {
     [drawnCards]
   );
 
-  const handleEmbaralhar = useCallback(() => {
+  // Carregar status de tiragens e redirecionar se não tiver créditos
+  useEffect(() => {
+    fetch("/api/tiragem-status", { credentials: "include" })
+      .then((res) => res.json())
+      .then((data: { tiragens?: number }) => {
+        const fromServer = data.tiragens ?? 0;
+        setTiragensRestantes((prev) => (fromServer > 0 ? fromServer : prev));
+        setStatusLoading(false);
+      })
+      .catch(() => {
+        setStatusLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (statusLoading) return;
+    if (tiragensRestantes > 0) return;
+    if (tiragensFromPurchase > 0) return;
+    router.replace("/#precos");
+  }, [statusLoading, tiragensRestantes, tiragensFromPurchase, router]);
+
+  const handleEmbaralhar = useCallback(async () => {
+    const useRes = await fetch("/api/use-tiragem", { method: "POST" });
+    const useData = (await useRes.json()) as { tiragens?: number; error?: string };
+
+    if (!useRes.ok) {
+      alert(useData.error ?? "Você não tem tiragens disponíveis.");
+      if (useData.error?.includes("não tem tiragens")) {
+        router.replace("/#precos");
+      }
+      return;
+    }
+
+    setTiragensRestantes(useData.tiragens ?? 0);
+
     const cards = pickRandomCards(3);
     setDrawnCards(cards);
     setState("revealing");
     setAiReading(null);
     setAiError(null);
     setTimeout(() => setState("revealed"), 800);
-  }, []);
+  }, [router]);
 
-  const handleNovaTiragem = useCallback(() => {
+  const handleNovaTiragem = useCallback(async () => {
+    setEmailSent(false);
+    const res = await fetch("/api/tiragem-status");
+    const data = (await res.json()) as { tiragens: number };
+    setTiragensRestantes(data.tiragens ?? 0);
+
     setState("shuffling");
     setDrawnCards([]);
     setCarouselActiveIndex(0);
@@ -75,8 +127,12 @@ export default function TiragemPage() {
 
     setAiLoading(true);
     setAiError(null);
+    setEmailSent(false);
     fetchTarotReading(drawnCards)
-      .then(setAiReading)
+      .then(({ reading, emailSent: sent }) => {
+        setAiReading(reading);
+        setEmailSent(sent);
+      })
       .catch((err) => setAiError(err instanceof Error ? err.message : "Erro ao gerar leitura"))
       .finally(() => setAiLoading(false));
   }, [state, drawnCards]);
@@ -87,6 +143,21 @@ export default function TiragemPage() {
     22,
     !!aiReading && !aiLoading
   );
+
+  if (statusLoading) {
+    return (
+      <div className="min-h-screen bg-mystic-gradient">
+        <StarsDecoration />
+        <div className="flex min-h-screen items-center justify-center">
+          <span className="inline-block h-10 w-10 animate-spin rounded-full border-2 border-[var(--mystic-lilac)] border-t-transparent" />
+        </div>
+      </div>
+    );
+  }
+
+  if (tiragensRestantes === 0 && tiragensFromPurchase === 0) {
+    return null; // Redirecionando para preços
+  }
 
   return (
     <div className="min-h-screen bg-mystic-gradient">
@@ -113,6 +184,9 @@ export default function TiragemPage() {
       <main className="relative px-4 pb-6 pt-4 sm:px-6 sm:pt-12 sm:pb-20">
         {state === "shuffling" && (
           <section className="mx-auto flex max-w-lg flex-col items-center py-16 sm:py-24">
+            <p className="mb-4 text-sm text-[var(--mystic-lilac)]/80">
+              {tiragensRestantes} {tiragensRestantes === 1 ? "tiragem" : "tiragens"} restantes
+            </p>
             <h1 className="mb-6 text-center font-[family-name:var(--font-cormorant)] text-3xl font-bold text-white sm:text-4xl">
               Concentre sua energia
             </h1>
@@ -207,30 +281,66 @@ export default function TiragemPage() {
                 </p>
               )}
               {aiReading && !aiLoading && (
-                <p className="whitespace-pre-line leading-relaxed text-[var(--mystic-lilac)]/95">
-                  {displayedReading}
-                  {displayedReading.length < aiReading.length && (
-                    <span
-                      className="ml-0.5 inline-block h-4 w-0.5 animate-pulse bg-[var(--mystic-lilac)] align-middle"
-                      aria-hidden
-                    />
+                <>
+                  <p className="whitespace-pre-line leading-relaxed text-[var(--mystic-lilac)]/95">
+                    {displayedReading}
+                    {displayedReading.length < aiReading.length && (
+                      <span
+                        className="ml-0.5 inline-block h-4 w-0.5 animate-pulse bg-[var(--mystic-lilac)] align-middle"
+                        aria-hidden
+                      />
+                    )}
+                  </p>
+                  {emailSent && (
+                    <p className="mt-4 text-sm text-[var(--mystic-lilac)]/70">
+                      ✉️ Uma cópia da sua leitura foi enviada para seu e-mail.
+                    </p>
                   )}
-                </p>
+                </>
               )}
             </div>
 
-            <div className="mt-6 flex justify-center sm:mt-12">
+            <div className="mt-6 flex flex-col items-center gap-4 sm:mt-12">
+              <p className="text-sm text-[var(--mystic-lilac)]/80">
+                {tiragensRestantes} {tiragensRestantes === 1 ? "tiragem" : "tiragens"} restantes
+              </p>
               <button
                 type="button"
                 onClick={handleNovaTiragem}
-                className="rounded-full border border-[var(--mystic-lilac)]/40 px-6 py-3 text-sm font-medium text-[var(--mystic-lilac)] transition hover:border-[var(--mystic-lilac)]/60 hover:bg-[var(--mystic-lilac)]/5"
+                disabled={tiragensRestantes === 0}
+                className="rounded-full border border-[var(--mystic-lilac)]/40 px-6 py-3 text-sm font-medium text-[var(--mystic-lilac)] transition hover:border-[var(--mystic-lilac)]/60 hover:bg-[var(--mystic-lilac)]/5 disabled:opacity-50 disabled:hover:bg-transparent"
               >
                 Nova tiragem
               </button>
+              {tiragensRestantes === 0 && (
+                <Link
+                  href="/#precos"
+                  className="text-sm text-[var(--mystic-lilac)] underline hover:text-[var(--mystic-lilac)]/80"
+                >
+                  Comprar mais tiragens
+                </Link>
+              )}
             </div>
           </section>
         )}
       </main>
     </div>
+  );
+}
+
+export default function TiragemPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-mystic-gradient">
+          <StarsDecoration />
+          <div className="flex min-h-screen items-center justify-center">
+            <span className="inline-block h-10 w-10 animate-spin rounded-full border-2 border-[var(--mystic-lilac)] border-t-transparent" />
+          </div>
+        </div>
+      }
+    >
+      <TiragemContent />
+    </Suspense>
   );
 }

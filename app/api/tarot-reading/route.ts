@@ -1,6 +1,8 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
 import type { ITarotCard } from "@/app/data/tarot-cards";
+import { getSession } from "@/lib/session";
+import { sendReadingEmail } from "@/lib/mailersend";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -64,7 +66,19 @@ Gere uma leitura MUITO resumida: 3 ou 4 frases no total. Conecte as cartas em um
       );
     }
 
-    return NextResponse.json({ reading });
+    // Enviar leitura por e-mail
+    let emailSent = false;
+    const ironSession = await getSession();
+    const userEmail = ironSession.email;
+    if (userEmail) {
+      try {
+        emailSent = await sendReadingEmail({ to: userEmail, cards, reading });
+      } catch (err) {
+        console.error("Erro ao enviar e-mail da leitura:", err);
+      }
+    }
+
+    return NextResponse.json({ reading, emailSent });
   } catch (error) {
     console.error("Erro na API de leitura:", error);
 
