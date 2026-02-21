@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Cormorant_Garamond } from "next/font/google";
+import { GoogleTagManagerNoScript, GoogleTagManagerScript } from "./components/GoogleTagManager";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -120,6 +121,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
+        <GoogleTagManagerScript />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -128,6 +130,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${cormorant.variable} antialiased`}
       >
+        <GoogleTagManagerNoScript />
         <a
           href="#main"
           className="fixed left-4 top-4 z-[100] -translate-y-16 rounded-lg bg-[var(--mystic-purple)] px-4 py-2 font-medium text-white shadow-lg transition focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-[var(--mystic-lilac)] focus:ring-offset-2 focus:ring-offset-[var(--background)]"
