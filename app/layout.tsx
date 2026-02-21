@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Cormorant_Garamond } from "next/font/google";
 import { GoogleTagManagerNoScript, GoogleTagManagerScript } from "./components/GoogleTagManager";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -138,6 +139,7 @@ export default function RootLayout({
           Pular para o conteúdo principal
         </a>
         {children}
+        <Analytics />
       </body>
     </html>
   );
