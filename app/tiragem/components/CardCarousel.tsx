@@ -44,7 +44,11 @@ export function CardCarousel({
   }, [handleScroll]);
 
   return (
-    <div className="w-full overflow-hidden">
+    <div
+      className="w-full overflow-hidden"
+      role="region"
+      aria-label="Cartas da leitura - deslize para navegar"
+    >
       <div
         ref={scrollRef}
         className="flex gap-3 overflow-x-auto overflow-y-hidden px-[12.5vw] pb-2 scroll-smooth scrollbar-hide"

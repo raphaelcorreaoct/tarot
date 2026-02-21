@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { ITarotCard } from "@/app/data/tarot-cards";
 import { getTarotCardImageUrl } from "@/app/data/tarot-card-images";
 
@@ -12,15 +12,53 @@ interface ICardModalProps {
 }
 
 export function CardModal({ card, position, onClose }: ICardModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
+
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Tab" || !modalRef.current) return;
+      const focusable = modalRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
     document.addEventListener("keydown", handleEscape);
+    document.addEventListener("keydown", handleKeyDown);
     document.body.style.overflow = "hidden";
+
+    setTimeout(() => {
+      const buttons = modalRef.current?.querySelectorAll<HTMLElement>(
+        '[data-modal-close]'
+      );
+      (buttons?.[buttons.length - 1] ?? buttons?.[0])?.focus();
+    }, 0);
+
     return () => {
       document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
+      previousFocusRef.current?.focus();
     };
   }, [onClose]);
 
@@ -28,6 +66,7 @@ export function CardModal({ card, position, onClose }: ICardModalProps) {
 
   return (
     <div
+      ref={modalRef}
       className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
       role="dialog"
       aria-modal="true"
@@ -38,7 +77,8 @@ export function CardModal({ card, position, onClose }: ICardModalProps) {
         type="button"
         onClick={onClose}
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        aria-label="Fechar"
+        aria-label="Fechar modal"
+        data-modal-close
       />
 
       {/* Modal content - max-height + overflow para mobile */}
@@ -86,6 +126,7 @@ export function CardModal({ card, position, onClose }: ICardModalProps) {
           <button
             type="button"
             onClick={onClose}
+            data-modal-close
             className="w-full rounded-full border border-[var(--mystic-lilac)]/40 py-3 text-sm font-medium text-[var(--mystic-lilac)] transition hover:border-[var(--mystic-lilac)]/60 hover:bg-[var(--mystic-lilac)]/10"
           >
             Fechar

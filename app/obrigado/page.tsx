@@ -53,6 +53,7 @@ function ObrigadoContent() {
           <Link
             href="/"
             className="flex items-center gap-2 font-[family-name:var(--font-cormorant)] text-xl font-semibold text-[var(--foreground)]"
+            aria-label="Tarot - Página inicial"
           >
             <Moon size={28} variant="crescent" />
             <span>Tarot</span>
@@ -60,10 +61,15 @@ function ObrigadoContent() {
         </div>
       </header>
 
-      <main className="relative flex min-h-[calc(100vh-80px)] flex-col items-center justify-center px-4 py-16">
+      <main id="main" className="relative flex min-h-[calc(100vh-80px)] flex-col items-center justify-center px-4 py-16">
         {status === "loading" && (
-          <div className="flex flex-col items-center gap-6">
-            <span className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-[var(--mystic-lilac)] border-t-transparent" />
+          <div
+            className="flex flex-col items-center gap-6"
+            role="status"
+            aria-live="polite"
+            aria-label="Confirmando sua compra"
+          >
+            <span className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-[var(--mystic-lilac)] border-t-transparent" aria-hidden />
             <p className="text-[var(--mystic-lilac)]/90">
               Confirmando sua compra...
             </p>
@@ -71,7 +77,11 @@ function ObrigadoContent() {
         )}
 
         {status === "success" && (
-          <div className="flex flex-col items-center gap-6 text-center">
+          <div
+            className="flex flex-col items-center gap-6 text-center"
+            role="status"
+            aria-live="polite"
+          >
             <div className="rounded-full bg-gradient-to-r from-[var(--mystic-purple)] to-[var(--mystic-rose)] p-4">
               <Star size={48} />
             </div>
@@ -106,8 +116,12 @@ export default function ObrigadoPage() {
       fallback={
         <div className="min-h-screen bg-mystic-gradient">
           <StarsDecoration />
-          <div className="flex min-h-screen items-center justify-center">
-            <span className="inline-block h-10 w-10 animate-spin rounded-full border-2 border-[var(--mystic-lilac)] border-t-transparent" />
+          <div
+            className="flex min-h-screen items-center justify-center"
+            role="status"
+            aria-label="Carregando"
+          >
+            <span className="inline-block h-10 w-10 animate-spin rounded-full border-2 border-[var(--mystic-lilac)] border-t-transparent" aria-hidden />
           </div>
         </div>
       }

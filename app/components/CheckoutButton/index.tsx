@@ -36,6 +36,8 @@ export function CheckoutButton({ plan, children, className }: ICheckoutButtonPro
       onClick={handleCheckout}
       disabled={loading}
       className={className}
+      aria-busy={loading}
+      aria-disabled={loading}
     >
       {loading ? "Redirecionando..." : children}
     </button>

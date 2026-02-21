@@ -1,21 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Cormorant_Garamond } from "next/font/google";
+import { Geist, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
+  display: "swap",
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://tarot.app";
@@ -129,8 +126,14 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} antialiased`}
+        className={`${geistSans.variable} ${cormorant.variable} antialiased`}
       >
+        <a
+          href="#main"
+          className="fixed left-4 top-4 z-[100] -translate-y-16 rounded-lg bg-[var(--mystic-purple)] px-4 py-2 font-medium text-white shadow-lg transition focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-[var(--mystic-lilac)] focus:ring-offset-2 focus:ring-offset-[var(--background)]"
+        >
+          Pular para o conteúdo principal
+        </a>
         {children}
       </body>
     </html>

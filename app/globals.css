@@ -21,7 +21,7 @@
   --color-mystic-violet: var(--mystic-violet);
   --color-mystic-fuchsia: var(--mystic-fuchsia);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: ui-monospace, monospace;
   --font-display: var(--font-cormorant);
 }
 
@@ -29,6 +29,24 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Focus visível para todos os elementos interativos (acessibilidade) */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--mystic-lilac);
+  outline-offset: 2px;
+}
+
+/* Respeitar preferência de movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Decorative gradient background */

@@ -148,7 +148,12 @@ function TiragemContent() {
     return (
       <div className="min-h-screen bg-mystic-gradient">
         <StarsDecoration />
-        <div className="flex min-h-screen items-center justify-center">
+        <div
+          className="flex min-h-screen items-center justify-center"
+          role="status"
+          aria-live="polite"
+          aria-label="Carregando"
+        >
           <span className="inline-block h-10 w-10 animate-spin rounded-full border-2 border-[var(--mystic-lilac)] border-t-transparent" />
         </div>
       </div>
@@ -168,6 +173,7 @@ function TiragemContent() {
           <Link
             href="/"
             className="flex items-center gap-2 font-[family-name:var(--font-cormorant)] text-xl font-semibold text-[var(--foreground)]"
+            aria-label="Tarot - Voltar ao início"
           >
             <Moon size={28} variant="crescent" />
             <span>Tarot</span>
@@ -181,7 +187,7 @@ function TiragemContent() {
         </div>
       </header>
 
-      <main className="relative px-4 pb-6 pt-4 sm:px-6 sm:pt-12 sm:pb-20">
+      <main id="main" className="relative px-4 pb-6 pt-4 sm:px-6 sm:pt-12 sm:pb-20">
         {state === "shuffling" && (
           <section className="mx-auto flex max-w-lg flex-col items-center py-16 sm:py-24">
             <p className="mb-4 text-sm text-[var(--mystic-lilac)]/80">
@@ -199,6 +205,7 @@ function TiragemContent() {
               type="button"
               onClick={handleEmbaralhar}
               className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[var(--mystic-purple)] to-[var(--mystic-rose)] px-10 py-4 text-lg font-semibold text-white shadow-lg shadow-[var(--mystic-purple)]/30 transition hover:opacity-95"
+              aria-label="Embaralhar cartas e revelar leitura"
             >
               Embaralhar e revelar
               <Star size={18} />
@@ -207,8 +214,8 @@ function TiragemContent() {
         )}
 
         {(state === "revealing" || state === "revealed") && (
-          <section className="mx-auto max-w-5xl">
-            <h2 className="mb-1 text-center font-[family-name:var(--font-cormorant)] text-xl font-bold text-white sm:mb-2 sm:text-3xl">
+          <section className="mx-auto max-w-5xl" aria-labelledby="reading-heading">
+            <h2 id="reading-heading" className="mb-1 text-center font-[family-name:var(--font-cormorant)] text-xl font-bold text-white sm:mb-2 sm:text-3xl">
               Sua leitura de tarot
             </h2>
             <p className="mb-4 text-center text-xs text-[var(--mystic-lilac)]/80 sm:mb-8 sm:text-sm">
@@ -264,14 +271,21 @@ function TiragemContent() {
             )}
 
             {/* 2. Interpretação por IA */}
-            <div className="reading-card-scroll mt-4 max-h-32 overflow-y-auto rounded-2xl border border-[var(--mystic-rose)]/30 bg-gradient-to-br from-[var(--mystic-violet)]/20 to-[var(--mystic-rose)]/10 p-4 backdrop-blur-sm sm:mt-10 sm:max-h-56 sm:p-8">
+            <div
+              className="reading-card-scroll mt-4 max-h-32 overflow-y-auto rounded-2xl border border-[var(--mystic-rose)]/30 bg-gradient-to-br from-[var(--mystic-violet)]/20 to-[var(--mystic-rose)]/10 p-4 backdrop-blur-sm sm:mt-10 sm:max-h-56 sm:p-8"
+              aria-live="polite"
+              aria-busy={aiLoading}
+            >
               <h3 className="mb-2 flex items-center gap-2 font-[family-name:var(--font-cormorant)] text-base font-semibold text-white sm:mb-4 sm:text-lg">
                 <Star size={18} />
                 Interpretação por IA
               </h3>
               {aiLoading && (
-                <div className="flex items-center gap-3 text-[var(--mystic-lilac)]/80">
-                  <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[var(--mystic-lilac)] border-t-transparent" />
+                <div
+                  className="flex items-center gap-3 text-[var(--mystic-lilac)]/80"
+                  role="status"
+                >
+                  <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[var(--mystic-lilac)] border-t-transparent" aria-hidden />
                   <span>A IA está interpretando suas cartas...</span>
                 </div>
               )}
@@ -309,6 +323,7 @@ function TiragemContent() {
                 onClick={handleNovaTiragem}
                 disabled={tiragensRestantes === 0}
                 className="rounded-full border border-[var(--mystic-lilac)]/40 px-6 py-3 text-sm font-medium text-[var(--mystic-lilac)] transition hover:border-[var(--mystic-lilac)]/60 hover:bg-[var(--mystic-lilac)]/5 disabled:opacity-50 disabled:hover:bg-transparent"
+                aria-disabled={tiragensRestantes === 0}
               >
                 Nova leitura
               </button>
@@ -334,8 +349,12 @@ export default function TiragemPage() {
       fallback={
         <div className="min-h-screen bg-mystic-gradient">
           <StarsDecoration />
-          <div className="flex min-h-screen items-center justify-center">
-            <span className="inline-block h-10 w-10 animate-spin rounded-full border-2 border-[var(--mystic-lilac)] border-t-transparent" />
+          <div
+            className="flex min-h-screen items-center justify-center"
+            role="status"
+            aria-label="Carregando"
+          >
+            <span className="inline-block h-10 w-10 animate-spin rounded-full border-2 border-[var(--mystic-lilac)] border-t-transparent" aria-hidden />
           </div>
         </div>
       }

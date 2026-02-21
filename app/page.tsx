@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CheckoutButton } from "./components/CheckoutButton";
 import { Moon } from "./components/Moon";
 import { Pentagram } from "./components/Pentagram";
+import { SeoContentSections } from "./components/SeoContentSections";
 import { Star } from "./components/Star";
 import { StarsDecoration } from "./components/StarsDecoration";
 
@@ -87,6 +88,12 @@ export default function Home() {
               FAQ
             </Link>
             <Link
+              href="#o-que-e-tarot"
+              className="hidden text-sm text-[var(--mystic-lilac)]/80 transition hover:text-[var(--mystic-lilac)] sm:block"
+            >
+              Saiba mais
+            </Link>
+            <Link
               href="#precos"
               className="rounded-full bg-gradient-to-r from-[var(--mystic-purple)] to-[var(--mystic-rose)] px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
             >
@@ -96,7 +103,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main>
+      <main id="main">
         {/* Hero */}
         <section
           className="relative px-4 pb-16 pt-12 sm:px-6 sm:pt-20 md:pt-28"
@@ -399,6 +406,8 @@ export default function Home() {
           </div>
         </section>
 
+        <SeoContentSections />
+
         {/* Final CTA */}
         <section
           id="comecar"
@@ -434,6 +443,21 @@ export default function Home() {
             <span className="font-[family-name:var(--font-cormorant)] font-semibold text-white">
               Tarot
             </span>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
+            <Link
+              href="/politica-privacidade"
+              className="text-[var(--mystic-lilac)]/60 transition hover:text-[var(--mystic-lilac)]"
+            >
+              Política de Privacidade
+            </Link>
+            <span className="text-[var(--mystic-lilac)]/40" aria-hidden="true">|</span>
+            <Link
+              href="/termos-de-uso"
+              className="text-[var(--mystic-lilac)]/60 transition hover:text-[var(--mystic-lilac)]"
+            >
+              Termos de Uso
+            </Link>
           </div>
           <p className="text-sm text-[var(--mystic-lilac)]/60">
             © {new Date().getFullYear()} Tarot. Feito com ✦ para sua jornada.
