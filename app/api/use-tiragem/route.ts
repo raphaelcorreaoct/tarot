@@ -8,7 +8,7 @@ export async function POST() {
 
     if (tiragens < 1) {
       return NextResponse.json(
-        { error: "Você não tem tiragens disponíveis. Faça uma compra para continuar." },
+        { error: "Você não tem leituras disponíveis. Faça uma compra para continuar." },
         { status: 403 }
       );
     }
@@ -18,12 +18,12 @@ export async function POST() {
 
     return NextResponse.json({
       tiragens: session.tiragens,
-      message: "Tiragem utilizada",
+      message: "Leitura utilizada",
     });
   } catch (err) {
-    console.error("Use tiragem error:", err);
+    console.error("Use leitura error:", err);
     return NextResponse.json(
-      { error: "Erro ao registrar tiragem" },
+      { error: "Erro ao registrar leitura" },
       { status: 500 }
     );
   }

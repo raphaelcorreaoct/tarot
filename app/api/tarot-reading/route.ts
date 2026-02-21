@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         },
         {
           role: "user",
-          content: `Tiragem de 3 cartas (Passado, Presente, Futuro):
+          content: `Leitura de tarot com 3 cartas (Passado, Presente, Futuro):
 
 ${cardsContext}
 

@@ -5,9 +5,55 @@ import { Pentagram } from "./components/Pentagram";
 import { Star } from "./components/Star";
 import { StarsDecoration } from "./components/StarsDecoration";
 
+import type { Metadata } from "next";
+
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://tarot.app";
+
+const FAQ_ITEMS = [
+  {
+    q: "O tarot online funciona?",
+    a: "Sim. O tarot é uma ferramenta de reflexão e introspecção. A energia da sua intenção e o momento presente são o que importam — não o formato físico ou digital das cartas.",
+  },
+  {
+    q: "Preciso pagar para fazer uma leitura de tarot?",
+    a: "Sim. Cada leitura de tarot requer um crédito. Você pode comprar uma leitura avulsa (R$ 9,90) ou um pacote com 3 leituras (R$ 24,90). Pagamento único, sem assinatura.",
+  },
+  {
+    q: "Preciso saber interpretar as cartas?",
+    a: "Não. Cada leitura de tarot vem com interpretação gerada por IA, detalhada e personalizada. A inteligência artificial explica o significado de cada carta no contexto da sua pergunta.",
+  },
+  {
+    q: "Posso consultar várias vezes ao dia?",
+    a: "Sim. Não há limite de consultas. Recomendamos dar um intervalo entre leituras sobre o mesmo tema para assimilação.",
+  },
+] as const;
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ_ITEMS.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.a,
+    },
+  })),
+};
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: SITE_URL,
+  },
+};
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-mystic-gradient">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <StarsDecoration />
 
       {/* Header */}
@@ -16,11 +62,12 @@ export default function Home() {
           <Link
             href="/"
             className="flex items-center gap-2 font-[family-name:var(--font-cormorant)] text-xl font-semibold text-[var(--foreground)]"
+            aria-label="Tarot Online - Página inicial"
           >
             <Moon size={28} variant="crescent" />
             <span>Tarot</span>
           </Link>
-          <nav className="flex items-center gap-6">
+          <nav className="flex items-center gap-6" aria-label="Menu principal">
             <Link
               href="#como-funciona"
               className="hidden text-sm text-[var(--mystic-lilac)]/80 transition hover:text-[var(--mystic-lilac)] sm:block"
@@ -72,8 +119,8 @@ export default function Home() {
               revelam para você
             </h1>
             <p className="mt-6 text-lg text-[var(--mystic-lilac)]/90 sm:text-xl">
-              Tiragens personalizadas com 3 cartas e interpretação feita por IA.
-              Tudo no seu celular, de forma discreta.
+              Leituras de tarot personalizadas com 3 cartas. A interpretação é
+              gerada por inteligência artificial (IA). Tudo no seu celular, de forma discreta.
             </p>
             <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
               <Link
@@ -108,8 +155,8 @@ export default function Home() {
               {[
                 {
                   icon: <Moon size={32} variant="crescent" />,
-                  title: "Tiragem do dia",
-                  desc: "Receba sua tiragem diária personalizada ao acordar. Um insight para orientar seu dia.",
+                  title: "Leitura do dia por IA",
+                  desc: "Receba sua leitura diária interpretada por inteligência artificial. Um insight para orientar seu dia.",
                 },
                 {
                   icon: <Pentagram size={32} />,
@@ -156,8 +203,8 @@ export default function Home() {
               {[
                 {
                   step: "1",
-                  title: "Escolha seu tipo de tiragem",
-                  desc: "Tiragem do dia, três cartas, cruz celta ou spread personalizado.",
+                  title: "Escolha seu tipo de leitura",
+                  desc: "Leitura do dia por IA, três cartas, cruz celta ou spread personalizado.",
                 },
                 {
                   step: "2",
@@ -166,8 +213,8 @@ export default function Home() {
                 },
                 {
                   step: "3",
-                  title: "Receba sua interpretação",
-                  desc: "Cada carta traz uma mensagem detalhada e personalizada para o seu momento.",
+                  title: "Receba sua interpretação por IA",
+                  desc: "Uma inteligência artificial analisa suas cartas e gera uma mensagem detalhada e personalizada para o seu momento.",
                 },
               ].map((item) => (
                 <li
@@ -248,7 +295,7 @@ export default function Home() {
                   Leitura de Tarot Personalizada – 3 Cartas
                 </h3>
                 <p className="mb-6 text-[var(--mystic-lilac)]/80">
-                  Receba uma tiragem exclusiva com 3 cartas do tarot, interpretadas
+                  Receba uma leitura de tarot exclusiva com 3 cartas. A IA interpreta
                   especialmente para o seu momento atual.
                 </p>
                 <ul className="mb-6 space-y-2 text-sm text-[var(--mystic-lilac)]/90">
@@ -257,7 +304,7 @@ export default function Home() {
                   <li>• A orientação para agir com mais clareza</li>
                 </ul>
                 <p className="mb-6 text-sm text-[var(--mystic-lilac)]/70">
-                  Leitura instantânea, privada e feita para você.
+                  Interpretação por IA, instantânea e privada.
                 </p>
                 <div className="mb-6">
                   <span className="font-[family-name:var(--font-cormorant)] text-3xl font-bold text-white">
@@ -299,8 +346,8 @@ export default function Home() {
                   <li>• Buscar clareza em momentos importantes</li>
                 </ul>
                 <p className="mb-6 text-sm text-[var(--mystic-lilac)]/70">
-                  Você recebe 3 tiragens independentes, cada uma com 3 cartas e
-                  interpretação personalizada.
+                  Você recebe 3 leituras independentes, cada uma com 3 cartas e
+                  interpretação personalizada por IA.
                 </p>
                 <div className="mb-6">
                   <span className="font-[family-name:var(--font-cormorant)] text-3xl font-bold text-white">
@@ -338,24 +385,7 @@ export default function Home() {
               Perguntas frequentes
             </h2>
             <dl className="space-y-8">
-              {[
-                {
-                  q: "O tarot online funciona?",
-                  a: "Sim. O tarot é uma ferramenta de reflexão e introspecção. A energia da sua intenção e o momento presente são o que importam — não o formato físico ou digital das cartas.",
-                },
-                {
-                  q: "Preciso pagar para fazer uma tiragem?",
-                  a: "Sim. Cada tiragem requer um crédito. Você pode comprar uma leitura avulsa (R$ 9,90) ou um pacote com 3 leituras (R$ 24,90). Pagamento único, sem assinatura.",
-                },
-                {
-                  q: "Preciso saber interpretar as cartas?",
-                  a: "Não. Cada tiragem vem com interpretação detalhada e personalizada. Explicamos o significado de cada carta no contexto da sua pergunta.",
-                },
-                {
-                  q: "Posso consultar várias vezes ao dia?",
-                  a: "Sim. Não há limite de consultas. Recomendamos dar um intervalo entre tiragens sobre o mesmo tema para assimilação.",
-                },
-              ].map((faq, i) => (
+              {FAQ_ITEMS.map((faq, i) => (
                 <div key={i} className="rounded-xl border border-white/5 bg-[var(--surface)]/30 p-6">
                   <dt className="font-[family-name:var(--font-cormorant)] text-lg font-semibold text-white">
                     {faq.q}
@@ -397,7 +427,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 px-4 py-8 sm:px-6">
+      <footer className="border-t border-white/5 px-4 py-8 sm:px-6" role="contentinfo">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center gap-2">
             <Moon size={20} variant="crescent" />

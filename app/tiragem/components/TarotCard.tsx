@@ -54,6 +54,7 @@ export function TarotCard({
             {imageUrl && !showFallback ? (
               <>
                 <Image
+                  priority={true}
                   src={imageUrl}
                   alt={card.name}
                   fill

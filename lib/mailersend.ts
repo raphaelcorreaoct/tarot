@@ -35,11 +35,11 @@ export async function sendReadingEmail({
 Suas cartas:
 ${cardsList}
 
-Leitura interpretativa:
+Interpretação por IA:
 ${reading}
 
 —
-Esta é sua leitura personalizada. Guarde-a para refletir no seu momento.`;
+Esta é sua leitura personalizada, gerada por inteligência artificial. Guarde-a para refletir no seu momento.`;
 
   const cardImagesHtml = cards
     .map(
@@ -75,10 +75,10 @@ Esta é sua leitura personalizada. Guarde-a para refletir no seu momento.`;
     <tr>${cardImagesHtml}</tr>
   </table>
   
-  <h2 style="font-size: 1.1rem; margin-top: 24px;">Leitura interpretativa</h2>
+  <h2 style="font-size: 1.1rem; margin-top: 24px;">Interpretação por IA</h2>
   <p style="white-space: pre-line; background: #f5f0ff; padding: 16px; border-radius: 8px; border-left: 4px solid #7c3aed;">${reading.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
   
-  <p style="margin-top: 32px; font-size: 0.85rem; color: #999;">Esta é sua leitura personalizada. Guarde-a para refletir no seu momento.</p>
+  <p style="margin-top: 32px; font-size: 0.85rem; color: #999;">Leitura personalizada gerada por inteligência artificial. Guarde-a para refletir no seu momento.</p>
 </body>
 </html>`;
 

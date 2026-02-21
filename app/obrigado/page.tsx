@@ -79,7 +79,7 @@ function ObrigadoContent() {
               Pagamento confirmado!
             </h1>
             <p className="max-w-sm text-[var(--mystic-lilac)]/90">
-              Redirecionando para sua tiragem...
+              Redirecionando para sua leitura...
             </p>
           </div>
         )}

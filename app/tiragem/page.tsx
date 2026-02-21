@@ -90,8 +90,8 @@ function TiragemContent() {
     const useData = (await useRes.json()) as { tiragens?: number; error?: string };
 
     if (!useRes.ok) {
-      alert(useData.error ?? "Você não tem tiragens disponíveis.");
-      if (useData.error?.includes("não tem tiragens")) {
+      alert(useData.error ?? "Você não tem leituras disponíveis.");
+      if (useData.error?.includes("não tem leituras")) {
         router.replace("/#precos");
       }
       return;
@@ -185,14 +185,14 @@ function TiragemContent() {
         {state === "shuffling" && (
           <section className="mx-auto flex max-w-lg flex-col items-center py-16 sm:py-24">
             <p className="mb-4 text-sm text-[var(--mystic-lilac)]/80">
-              {tiragensRestantes} {tiragensRestantes === 1 ? "tiragem" : "tiragens"} restantes
+              {tiragensRestantes} {tiragensRestantes === 1 ? "leitura" : "leituras"} restantes
             </p>
             <h1 className="mb-6 text-center font-[family-name:var(--font-cormorant)] text-3xl font-bold text-white sm:text-4xl">
               Concentre sua energia
             </h1>
             <p className="mb-10 max-w-sm text-center text-[var(--mystic-lilac)]/90">
-              Pense na sua pergunta ou no que deseja saber. Quando sentir que
-              está pronto, toque no baralho para revelar suas cartas.
+              Pense na sua pergunta ou no que deseja saber. A IA interpretará
+              suas cartas quando você revelar. Toque no baralho quando estiver pronto.
             </p>
             <ShuffleDeck className="mb-12" />
             <button
@@ -209,7 +209,7 @@ function TiragemContent() {
         {(state === "revealing" || state === "revealed") && (
           <section className="mx-auto max-w-5xl">
             <h2 className="mb-1 text-center font-[family-name:var(--font-cormorant)] text-xl font-bold text-white sm:mb-2 sm:text-3xl">
-              Sua tiragem
+              Sua leitura de tarot
             </h2>
             <p className="mb-4 text-center text-xs text-[var(--mystic-lilac)]/80 sm:mb-8 sm:text-sm">
               Passado · Presente · Futuro
@@ -263,16 +263,16 @@ function TiragemContent() {
               />
             )}
 
-            {/* 2. Leitura interpretativa logo abaixo das cartas */}
+            {/* 2. Interpretação por IA */}
             <div className="reading-card-scroll mt-4 max-h-32 overflow-y-auto rounded-2xl border border-[var(--mystic-rose)]/30 bg-gradient-to-br from-[var(--mystic-violet)]/20 to-[var(--mystic-rose)]/10 p-4 backdrop-blur-sm sm:mt-10 sm:max-h-56 sm:p-8">
               <h3 className="mb-2 flex items-center gap-2 font-[family-name:var(--font-cormorant)] text-base font-semibold text-white sm:mb-4 sm:text-lg">
                 <Star size={18} />
-                Leitura interpretativa
+                Interpretação por IA
               </h3>
               {aiLoading && (
                 <div className="flex items-center gap-3 text-[var(--mystic-lilac)]/80">
                   <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[var(--mystic-lilac)] border-t-transparent" />
-                  <span>As cartas estão sendo interpretadas...</span>
+                  <span>A IA está interpretando suas cartas...</span>
                 </div>
               )}
               {aiError && (
@@ -293,7 +293,7 @@ function TiragemContent() {
                   </p>
                   {emailSent && (
                     <p className="mt-4 text-sm text-[var(--mystic-lilac)]/70">
-                      ✉️ Uma cópia da sua leitura foi enviada para seu e-mail.
+                      ✉️ Uma cópia da sua leitura (interpretação por IA) foi enviada para seu e-mail.
                     </p>
                   )}
                 </>
@@ -302,7 +302,7 @@ function TiragemContent() {
 
             <div className="mt-6 flex flex-col items-center gap-4 sm:mt-12">
               <p className="text-sm text-[var(--mystic-lilac)]/80">
-                {tiragensRestantes} {tiragensRestantes === 1 ? "tiragem" : "tiragens"} restantes
+                {tiragensRestantes} {tiragensRestantes === 1 ? "leitura" : "leituras"} restantes
               </p>
               <button
                 type="button"
@@ -310,14 +310,14 @@ function TiragemContent() {
                 disabled={tiragensRestantes === 0}
                 className="rounded-full border border-[var(--mystic-lilac)]/40 px-6 py-3 text-sm font-medium text-[var(--mystic-lilac)] transition hover:border-[var(--mystic-lilac)]/60 hover:bg-[var(--mystic-lilac)]/5 disabled:opacity-50 disabled:hover:bg-transparent"
               >
-                Nova tiragem
+                Nova leitura
               </button>
               {tiragensRestantes === 0 && (
                 <Link
                   href="/#precos"
                   className="text-sm text-[var(--mystic-lilac)] underline hover:text-[var(--mystic-lilac)]/80"
                 >
-                  Comprar mais tiragens
+                  Comprar mais leituras
                 </Link>
               )}
             </div>
